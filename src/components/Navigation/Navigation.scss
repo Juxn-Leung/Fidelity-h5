@@ -1,0 +1,19 @@
+@import '@/styles/var.scss';
+
+.navigation {
+  flex-direction: column;
+  box-shadow: 0 2px 2px rgba(5, 5, 5, 0.1);
+  background: $--color-background-black;
+  .ant-menu {
+    border-inline-end: none !important;
+  }
+  .ant-menu-dark {
+    background: $--color-background-black;
+  }
+  .ant-btn {
+    color: $--color-white;
+    &:hover {
+      color: $--color-primary;
+    }
+  }
+}

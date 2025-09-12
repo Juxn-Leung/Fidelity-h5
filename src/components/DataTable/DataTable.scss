@@ -1,0 +1,52 @@
+@import '@/styles/var.scss';
+.ant-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 0;
+  .ant-spin-nested-loading {
+    height: 100%;
+    .ant-spin-container {
+      height: 100%;
+      .ant-table {
+        overflow: auto;
+        height: calc(100% - 48px);
+
+        .ant-table-thead {
+          th {
+            background: #FEFBF0;
+          }
+        }
+
+        .ant-table-tbody {
+          .odd {
+            background-color: #fff;
+          }
+          .even {
+            background-color: rgba(250, 250, 250, 1);
+            .ant-table-cell-fix-right {
+              background-color: rgba(250, 250, 250, 1);
+            }
+          }
+          .ant-table-row.ant-table-row-selected > .ant-table-cell {
+            background: $--color-primary-light3 !important;
+          }
+        }
+
+        // 表格内操作列字體顔色
+        .cursor-pointer {
+          color: $--color-primary;
+        }
+
+        // 表格内操作列字體鼠標懸停顔色
+        .cursor-pointer:hover {
+          color: $--color-primary;
+        }
+
+        .ant-table-header.ant-table-sticky-holder {
+          overflow: visible !important;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+@import '@/styles/var.scss';
+
+.ant-form-item .ant-form-item-label {
+  overflow: visible;
+}
+
+.ant-form-item-control-input-content {
+  span.anticon {
+    color: $--color-primary;
+  }
+
+  .text-show {
+    color: $--color-primary;
+    text-decoration: underline;
+  }
+}

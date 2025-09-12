@@ -1,0 +1,10 @@
+{
+  "patterns": [
+    "./src/**/*.(ts|tsx|json)"
+  ],
+  "gitignore": true,
+  "ignoreTexts": [
+    "简体中文"
+  ],
+  "ignoreComments": true
+}

@@ -1,0 +1,11 @@
+.form-filter-label {
+  flex-shrink: 0;
+  width: 100px;
+  padding-right: 8px;
+  line-height: 1.1;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
