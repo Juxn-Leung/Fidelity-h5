@@ -1,4 +1,4 @@
-import { Form } from 'antd'
+import { Form, Image } from 'antd'
 import Marquee from 'react-fast-marquee'
 import 'react-quill/dist/quill.snow.css'
 import { useMemo, useState } from 'react'
@@ -64,6 +64,10 @@ const View: React.FC = () => {
           </p>
         </Marquee>
       )}
+
+      <div className="w-full absolute bottom-0">
+        <Image src="@/assets/images/horizontal.png" />
+      </div>
     </div>
   )
 }
