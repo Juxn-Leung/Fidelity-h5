@@ -1,7 +1,7 @@
 import { Form } from 'antd'
 import Marquee from 'react-fast-marquee'
 import 'react-quill/dist/quill.snow.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatPicUrl } from '@/utils/format'
 import useMessage from '@/components/MessageContent/useMessage'
 import useSpin from '@/components/SpinContent/useSpin'
@@ -19,7 +19,8 @@ const View: React.FC = () => {
 
   const [patternName, setPatternName] = useState<string>('')
   const [backgroundId, setBackgroundId] = useState<string>('11')
-  const [patternMode, setPatternMode] = useState<string>('notice') //  text
+  // const [patternMode, setPatternMode] = useState<string>('notice')
+  const [patternMode, setPatternMode] = useState<string>('text')
   const [patternContent, setPatternContent] = useState<string>(`亲爱的XX：
 遇见你，是我此生最美的意外。你的笑容是我的阳光，你的陪伴是我最深的依赖。未来的路，我想和你一起走，分享每一个平凡与闪耀的时刻。我爱你，用我全部的真心。你愿意嫁给我，让我用余生守护你、疼爱你吗？`)
   const [message, setMessage] = useState<string>(`亲爱的XX：
@@ -39,42 +40,63 @@ const View: React.FC = () => {
     }
   }, [backgroundId])
 
-  const [orientation, setOrientation] = useState<"portrait" | "landscape">(
-    window.matchMedia("(orientation: portrait)").matches
-      ? "portrait"
-      : "landscape"
-  );
+  const textStyle = useMemo(() => {
+    if (phoneType === 'horizontal') {
+      return {
+        padding: '16px',
+        height: '70%',
+        width: '100%',
+        top: '15%',
+        left: '0',
+        wordWrap: 'break-word',
+      }
+    } else {
+      return {
+        padding: '16% 0',
+        right: '15%',
+        width: '70%',
+        display: 'inline-block',
+        writingMode: 'vertical-rl',
+        WebkitWritingMode: 'vertical-rl',
+        msWritingMode: 'vertical-rl',
+        textOrientation: 'sideways',
+      }
+    }
+  }, [phoneType])
 
   useEffect(() => {
-    // 監聽 orientationchange（大部分瀏覽器支援）
-    const handleOrientationChange = () => {
-      if (window.matchMedia("(orientation: portrait)").matches) {
-        setOrientation("portrait");
-      } else {
-        setOrientation("landscape");
+    const el = document.documentElement;
+
+    const enterFullScreen = () => {
+      if (el.requestFullscreen) {
+        el.requestFullscreen();
+      } else if ((el as any).webkitRequestFullscreen) {
+        (el as any).webkitRequestFullscreen();
+      } else if ((el as any).msRequestFullscreen) {
+        (el as any).msRequestFullscreen();
       }
     };
 
-    // 監聽螢幕方向改變
-    window.addEventListener("orientationchange", handleOrientationChange);
+    // 初始綁定：首次點擊全屏
+    const onClick = () => enterFullScreen();
+    document.addEventListener("click", onClick);
 
-    // 附加方案：監聽 deviceorientation（角度更精確）
-    const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
-      const { beta, gamma } = e;
-      if (beta !== null && gamma !== null) {
-        // 簡單判斷：手機橫過來
-        if (Math.abs(gamma) > 45) {
-          setOrientation("landscape");
-        } else {
-          setOrientation("portrait");
-        }
-      }
+    // 監聽退出全屏事件
+    const onExit = () => {
+      console.log("退出全屏，等待下一次點擊進入");
+      document.addEventListener("click", onClick, { once: true }); 
+      // once: true 保證只觸發一次，避免多次綁定
     };
-    window.addEventListener("deviceorientation", handleDeviceOrientation);
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        onExit();
+      }
+    });
 
     return () => {
-      window.removeEventListener("orientationchange", handleOrientationChange);
-      window.removeEventListener("deviceorientation", handleDeviceOrientation);
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("fullscreenchange", onExit);
     };
   }, []);
 
@@ -84,16 +106,7 @@ const View: React.FC = () => {
         <div
           dangerouslySetInnerHTML={{ __html: message }}
           className="absolute"
-          style={{
-            padding: '16px',
-            height: '70%',
-            width: '100%',
-            top: '15%',
-            left: '0',
-            wordWrap: 'break-word',
-            transform:
-              phoneType === 'horizontal' ? 'rotate(0deg)' : 'rotate(90deg)',
-          }}
+          style={textStyle}
         ></div>
       ) : (
         <div
@@ -102,58 +115,68 @@ const View: React.FC = () => {
             width: '100vw',
           }}
         >
-          {phoneType === 'horizontal' ? <Marquee
-            style={{
-              
-              padding: '16px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              left: '0',
-              position: 'absolute',
-              // writingMode: 'vertical-rl',
-              // textOrientation: 'mixed'
-            }}
-          >
-            <p
+          {phoneType === 'horizontal' ? (
+            <Marquee
               style={{
-                fontSize: '36px',
-                color: '#333',
+                padding: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                left: '0',
+                position: 'absolute',
               }}
             >
-              {patternContent}
-            </p>
-          </Marquee> :
-          <marquee 
-            direction="up"
-            loop={-1}
-            style={{
-              width: '80px',
-              height: '100%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              position: 'absolute',
-            }}
-          >
-            <p
+              <p
+                style={{
+                  fontSize: '36px',
+                  color: '#333',
+                }}
+              >
+                {patternContent}
+              </p>
+            </Marquee>
+          ) : (
+            <marquee
+              direction="up"
+              loop={-1}
               style={{
-                width: 'max-content',
-                height: 'max-content',
-                fontSize: '36px',
-                color: '#333',
-                display: 'inline-block',
-                writingMode: 'vertical-rl',
-                textOrientation: 'sideways', // 直排，想讓中文「像英文一樣橫過來」
-                whiteSpace: 'nowrap',
+                width: '80px',
+                height: '100%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                position: 'absolute',
               }}
             >
-              {patternContent}
-            </p>
-          </marquee>}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                  width: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '36px',
+                    color: '#333',
+                    display: 'inline-block',
+                    writingMode: 'vertical-rl',
+                    WebkitWritingMode: 'vertical-rl',
+                    msWritingMode: 'vertical-rl',
+                    textOrientation: 'sideways',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {patternContent}
+                </p>
+              </div>
+            </marquee>
+          )}
         </div>
       )}
 
       <div
-        className="absolute bottom-2 left-2 w-8 h-8"
+        className="absolute bottom-2 left-2 w-8 h-8 opacity-50"
         onClick={() =>
           setPhoneType(phoneType === 'horizontal' ? 'vertical' : 'horizontal')
         }
