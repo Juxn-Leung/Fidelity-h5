@@ -2,16 +2,16 @@ import axiosInstance from './axiosInstance'
 import { BaseAPI } from './BaseAPI'
 
 export class LoginAPI extends BaseAPI {
-  async login(credentials: { account: string; password: string }) {
+  async getLinkInfo(params: any) {
     const { data } = await axiosInstance({
-      url: `${this.endpoint}/login`,
+      url: `${this.endpoint}/getLinkInfo`,
       method: 'post',
-      data: credentials,
+      params,
     })
     return data
   }
 }
 
 export default new LoginAPI(
-  '/api/user'
+  '/api/wechat'
 )

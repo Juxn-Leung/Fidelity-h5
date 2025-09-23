@@ -12,7 +12,7 @@ import {
 } from 'antd/lib/menu/interface'
 import { useAuth, RequiredAuthorities } from '@/contexts/AuthContext'
 import omit from 'lodash/omit'
-import { Permission } from '@/enums//permissionEnum'
+import { Permission } from '@/enums/permissionEnum'
 
 type MenuItem = Required<MenuProps>['items'][number]
 interface ExtendedMenuItemType extends MenuItemType {

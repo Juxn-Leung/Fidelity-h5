@@ -1,10 +1,11 @@
-import { Form } from 'antd'
 import Marquee from 'react-fast-marquee'
 import 'react-quill/dist/quill.snow.css'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useParams } from 'react-router'
 import { formatPicUrl } from '@/utils/format'
 import useMessage from '@/components/MessageContent/useMessage'
 import useSpin from '@/components/SpinContent/useSpin'
+import WechatAPI from '@/apis/WechatAPI'
 import horizontal from '@/assets/images/horizontal.png'
 import vertical from '@/assets/images/vertical.png'
 import fidelity from '@/assets/images/fidelity.png'
@@ -13,18 +14,14 @@ import '@/styles/font.css'
 const View: React.FC = () => {
   const { msg } = useMessage()
   const { toggleSpin } = useSpin()
-  const [form] = Form.useForm()
+  const { id: linkId } = useParams<{ id: string }>()
 
   const [phoneType, setPhoneType] = useState<string>('horizontal') // horizontal vertical
-
-  const [patternName, setPatternName] = useState<string>('')
-  const [backgroundId, setBackgroundId] = useState<string>('11')
+  const [backgroundId, setBackgroundId] = useState<string>('')
   // const [patternMode, setPatternMode] = useState<string>('notice')
   const [patternMode, setPatternMode] = useState<string>('text')
-  const [patternContent, setPatternContent] = useState<string>(`亲爱的XX：
-遇见你，是我此生最美的意外。你的笑容是我的阳光，你的陪伴是我最深的依赖。未来的路，我想和你一起走，分享每一个平凡与闪耀的时刻。我爱你，用我全部的真心。你愿意嫁给我，让我用余生守护你、疼爱你吗？`)
-  const [message, setMessage] = useState<string>(`亲爱的XX：
-遇见你，是我此生最美的意外。你的笑容是我的阳光，你的陪伴是我最深的依赖。未来的路，我想和你一起走，分享每一个平凡与闪耀的时刻。我爱你，用我全部的真心。你愿意嫁给我，让我用余生守护你、疼爱你吗？`)
+  const [patternContent, setPatternContent] = useState<string>(``)
+  const [message, setMessage] = useState<string>(``)
 
   const phoneStyle = useMemo(() => {
     return {
@@ -40,65 +37,67 @@ const View: React.FC = () => {
     }
   }, [backgroundId])
 
-  const textStyle = useMemo(() => {
-    if (phoneType === 'horizontal') {
-      return {
-        padding: '16px',
-        height: '70%',
-        width: '100%',
-        top: '15%',
-        left: '0',
-        wordWrap: 'break-word',
+  const getDetail = async () => {
+    try {
+      toggleSpin(true)
+      const { data } = await WechatAPI.getLinkInfo({
+        linkId,
+      })
+      setBackgroundId(data?.picId)
+      setPatternMode(data?.mode || 'text')
+      if (data?.mode === 'text') {
+        setMessage(data?.linkContent || '')
+      } else {
+        setPatternContent(data?.linkContent || '')
       }
-    } else {
-      return {
-        padding: '16% 0',
-        right: '15%',
-        width: '70%',
-        display: 'inline-block',
-        writingMode: 'vertical-rl',
-        WebkitWritingMode: 'vertical-rl',
-        msWritingMode: 'vertical-rl',
-        textOrientation: 'sideways',
-      }
+    } catch (error) {
+      msg.error('链接失效，请重新生成')
+    } finally {
+      toggleSpin(false)
     }
-  }, [phoneType])
+  }
 
   useEffect(() => {
-    const el = document.documentElement;
+    const el = document.documentElement
 
     const enterFullScreen = () => {
       if (el.requestFullscreen) {
-        el.requestFullscreen();
+        el.requestFullscreen()
       } else if ((el as any).webkitRequestFullscreen) {
-        (el as any).webkitRequestFullscreen();
+        ;(el as any).webkitRequestFullscreen()
       } else if ((el as any).msRequestFullscreen) {
-        (el as any).msRequestFullscreen();
+        ;(el as any).msRequestFullscreen()
       }
-    };
+    }
 
     // 初始綁定：首次點擊全屏
-    const onClick = () => enterFullScreen();
-    document.addEventListener("click", onClick);
+    const onClick = () => enterFullScreen()
+    document.addEventListener('click', onClick)
 
     // 監聽退出全屏事件
     const onExit = () => {
-      console.log("退出全屏，等待下一次點擊進入");
-      document.addEventListener("click", onClick, { once: true }); 
+      console.log('退出全屏，等待下一次點擊進入')
+      document.addEventListener('click', onClick, { once: true })
       // once: true 保證只觸發一次，避免多次綁定
-    };
+    }
 
-    document.addEventListener("fullscreenchange", () => {
+    document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
-        onExit();
+        onExit()
       }
-    });
+    })
 
     return () => {
-      document.removeEventListener("click", onClick);
-      document.removeEventListener("fullscreenchange", onExit);
-    };
-  }, []);
+      document.removeEventListener('click', onClick)
+      document.removeEventListener('fullscreenchange', onExit)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (linkId) {
+      getDetail()
+    }
+  }, [linkId])
 
   return (
     <div className="phone-preview absolute" style={phoneStyle}>
@@ -106,7 +105,27 @@ const View: React.FC = () => {
         <div
           dangerouslySetInnerHTML={{ __html: message }}
           className="absolute"
-          style={textStyle}
+          style={
+            phoneType === 'horizontal'
+              ? {
+                  padding: '16px',
+                  height: '70%',
+                  width: '100%',
+                  top: '15%',
+                  left: '0',
+                  wordWrap: 'break-word',
+                }
+              : {
+                  padding: '16% 0',
+                  right: '15%',
+                  width: '70%',
+                  display: 'inline-block',
+                  writingMode: 'vertical-rl',
+                  WebkitWritingMode: 'vertical-rl',
+                  msWritingMode: 'vertical-rl',
+                  textOrientation: 'sideways',
+                }
+          }
         ></div>
       ) : (
         <div
