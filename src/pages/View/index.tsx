@@ -109,16 +109,19 @@ const View: React.FC = () => {
             phoneType === 'horizontal'
               ? {
                   padding: '16px',
-                  height: '70%',
+                  height: 'auto',
                   width: '100%',
-                  top: '15%',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
                   left: '0',
                   wordWrap: 'break-word',
                 }
               : {
                   padding: '16% 0',
-                  right: '15%',
-                  width: '70%',
+                  width: 'auto',
+                  height: '100%',
+                  right: '50%',
+                  transform: 'translateX(50%)',
                   display: 'inline-block',
                   writingMode: 'vertical-rl',
                   WebkitWritingMode: 'vertical-rl',
