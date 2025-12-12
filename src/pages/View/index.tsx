@@ -9,7 +9,7 @@ import WechatAPI from '@/apis/WechatAPI'
 import horizontal from '@/assets/images/horizontal.png'
 import vertical from '@/assets/images/vertical.png'
 import fidelity from '@/assets/images/fidelity.png'
-import '@/styles/font.css'
+// import '@/styles/font.css'
 
 const View: React.FC = () => {
   const { msg } = useMessage()
@@ -33,7 +33,7 @@ const View: React.FC = () => {
       left: 0,
       right: 0,
       bottom: 0,
-      fontFamily: 'PingFangJiangNanTi',
+      // fontFamily: 'PingFangJiangNanTi',
     }
   }, [backgroundId])
 
@@ -149,7 +149,7 @@ const View: React.FC = () => {
             >
               <p
                 style={{
-                  fontSize: '36px',
+                  fontSize: '60px',
                   color: '#333',
                 }}
               >
@@ -161,7 +161,7 @@ const View: React.FC = () => {
               direction="up"
               loop={-1}
               style={{
-                width: '80px',
+                width: '120px',
                 height: '100%',
                 left: '50%',
                 transform: 'translateX(-50%)',
@@ -179,7 +179,7 @@ const View: React.FC = () => {
               >
                 <p
                   style={{
-                    fontSize: '36px',
+                    fontSize: '100px',
                     color: '#333',
                     display: 'inline-block',
                     writingMode: 'vertical-rl',
@@ -206,12 +206,12 @@ const View: React.FC = () => {
         <img src={phoneType === 'horizontal' ? vertical : horizontal} />
       </div>
 
-      <div className="absolute top-1 left-1">
+      {/* <div className="absolute top-1 left-1">
         <img src={fidelity} className="w-10" />
       </div>
       <div className="absolute bottom-1 right-1">
         <img src={fidelity} className="w-10" />
-      </div>
+      </div> */}
     </div>
   )
 }
