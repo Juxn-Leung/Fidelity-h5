@@ -8,7 +8,7 @@ import useSpin from '@/components/SpinContent/useSpin'
 import WechatAPI from '@/apis/WechatAPI'
 import horizontal from '@/assets/images/horizontal.png'
 import vertical from '@/assets/images/vertical.png'
-import fidelity from '@/assets/images/fidelity.png'
+// import fidelity from '@/assets/images/fidelity.png'
 // import '@/styles/font.css'
 
 const View: React.FC = () => {
@@ -149,7 +149,7 @@ const View: React.FC = () => {
             >
               <p
                 style={{
-                  fontSize: '60px',
+                  fontSize: '120px',
                   color: '#333',
                 }}
               >
@@ -161,7 +161,7 @@ const View: React.FC = () => {
               direction="up"
               loop={-1}
               style={{
-                width: '120px',
+                width: '140px',
                 height: '100%',
                 left: '50%',
                 transform: 'translateX(-50%)',
@@ -179,7 +179,7 @@ const View: React.FC = () => {
               >
                 <p
                   style={{
-                    fontSize: '100px',
+                    fontSize: '140px',
                     color: '#333',
                     display: 'inline-block',
                     writingMode: 'vertical-rl',
